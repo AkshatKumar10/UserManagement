@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import fs from "file-system";
 import Image from "../models/image.model.js";
 

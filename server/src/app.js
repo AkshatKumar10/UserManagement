@@ -30,9 +30,6 @@ app.use((err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
     res.status(401).json({ error: `${err.name} : ${err.message}` });
   }
-  errorLogger.error(`Date: ${new Date().toUTCString()} | Error: ${err.message}
-  | Type: ${err.name} | Stack: ${err.stack.trim()}`);
-  res.end("Server Error");
 });
 
 export default app;

@@ -15,15 +15,6 @@ router.get(
   }
 );
 
-router.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    if (req.cookies.userJwtToken) {
-      res.send(JSON.stringify({ message: req.cookies.userJwtToken }));
-    }
-  }
-);
 // For authorization add here authCtrl.hasAuthorization. If user does not have httpyOnly cookie in request he or she will not
 //be able to access routes. Also users using POSTMAN would be prevented from sending req if they are not logged in
 router.route("/api/users").post(userCtrl.getUsers);

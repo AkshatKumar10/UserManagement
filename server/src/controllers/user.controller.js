@@ -22,7 +22,7 @@ const read = (req, res) => {
       {
         _id: user._id,
         email: user.email,
-        name: user.name,
+        name: `${user.firstName} ${user.lastName}`,
         status: user.status,
         role: user.role,
       },
