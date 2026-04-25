@@ -20,42 +20,8 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TextFieldsGenerator from "../utils/TextFieldsGenerator";
-import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme) => ({
-  card: {
-    maxWidth: 600,
-    textAlign: "center",
-    margin: "0 auto",
-    marginTop: theme.spacing(5),
-    paddingBottom: theme.spacing(2),
-    [theme.breakpoints.only("xs")]: {
-      maxWidth: 300,
-      padding: theme.spacing(2),
-      margin: "0 auto",
-      marginTop: theme.spacing(2),
-    },
-  },
-  error: {
-    verticalAlign: "middle",
-    fontSize: "18px",
-  },
-  submit: {
-    margin: "auto !important",
-    marginBottom: theme.spacing(2),
-    [theme.breakpoints.only("xs")]: {
-      marginBottom: theme.spacing(0),
-    },
-  },
-  textFields: {
-    minWidth: "320px",
-  },
-  closeIcon: {
-    textAlign: "right",
-  },
-}));
 const CreateUser = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const createUserStatus = useSelector(getCreateUserStatus);
@@ -158,8 +124,17 @@ const CreateUser = () => {
   };
 
   return (
-    <Card className={classes.card}>
-      <div className={classes.closeIcon}>
+    <Card
+      sx={{
+        maxWidth: 600,
+        textAlign: "center",
+        margin: "0 auto",
+        mt: 5,
+        pb: 2,
+        px: { xs: 2, md: 0 },
+      }}
+    >
+      <div style={{ textAlign: "right" }}>
         <Tooltip title="Close window">
           <CloseIcon
             fontSize="small"
@@ -185,19 +160,25 @@ const CreateUser = () => {
               values={values}
               value={signupData}
               labels={labels}
-              className={classes.textFields}
+              sx={{ minWidth: "320px" }}
               types={types}
             />
 
             {values.error ? (
               <Typography component="p" color="error">
-                <Icon color="error" className={classes.error}></Icon>
+                <Icon
+                  color="error"
+                  sx={{ verticalAlign: "middle", fontSize: "18px" }}
+                ></Icon>
                 {values.error}
               </Typography>
             ) : (
               createUserStatus?.error && (
                 <Typography component="p" color="error">
-                  <Icon color="error" className={classes.error}></Icon>
+                  <Icon
+                    color="error"
+                    sx={{ verticalAlign: "middle", fontSize: "18px" }}
+                  ></Icon>
                   {createUserStatus.error}
                 </Typography>
               )
@@ -210,7 +191,7 @@ const CreateUser = () => {
               color="primary"
               variant="contained"
               onClick={clickSubmit}
-              className={classes.submit}
+              sx={{ margin: "auto", mb: 2 }}
             >
               Submit
             </Button>
