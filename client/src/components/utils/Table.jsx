@@ -20,7 +20,6 @@ const TableComponent = ({ columns, createData, createRows, rows }) => {
       sx={{
         width: "100%",
         overflow: "hidden",
-        borderRadius: 4,
         backgroundColor: "background.paper",
       }}
     >

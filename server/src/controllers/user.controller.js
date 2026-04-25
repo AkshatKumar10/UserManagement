@@ -1,19 +1,18 @@
-/* eslint-disable no-underscore-dangle */
 import jwt from "jsonwebtoken";
 import _ from "lodash";
 import User from "../models/user.model.js";
 import dbErrorHandler from "./helpers/dbErrorHandler.js";
 import config from "../config/config.js";
 
-const createUser = (req, res, next) => {
-  const user = new User(req.body);
-  user.save((err, result) => {
-    if (err) {
-      res.send({ error: dbErrorHandler.getErrorMessage(err) });
-    } else {
-      res.send({ message: "Successfuly created a new user." });
-    }
-  });
+const createUser = async (req, res, next) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+
+    res.send({ message: "Successfully created a new user." });
+  } catch (err) {
+    res.status(400).send({ error: dbErrorHandler.getErrorMessage(err) });
+  }
 };
 
 const read = (req, res) => {
@@ -26,7 +25,7 @@ const read = (req, res) => {
         status: user.status,
         role: user.role,
       },
-      config.secret
+      config.secret,
     );
 
     return res.send({
@@ -60,7 +59,7 @@ const update = async (req, res, next) => {
 const remove = (req, res) => {
   User.findOneAndUpdate(
     { _id: req.profile.id },
-    { status: "deactivated" }
+    { status: "deactivated" },
   ).exec((err, user) => {
     if (user) {
       return res.send({ message: "Profile deleted" });
@@ -88,26 +87,26 @@ const getUsers = (req, res) => {
                     item.firstName.toLowerCase()
                   ).includes(req.body.filterTerm))) ||
               (item.status === "active" &&
-                item.email.toLowerCase().includes(req.body.filterTerm))
+                item.email.toLowerCase().includes(req.body.filterTerm)),
           )
           .slice(req.body.firstValue, req.body.lastValue)
       : req.body.role && req.body.accountStatus
-      ? user
-          .filter(
-            (item) =>
-              item.role === req.body.role &&
-              item.status === req.body.accountStatus
-          )
-          .slice(req.body.firstValue, req.body.lastValue)
-      : req.body.role
-      ? user
-          .filter((item) => item.role === req.body.role)
-          .slice(req.body.firstValue, req.body.lastValue)
-      : req.body.accountStatus
-      ? user
-          .filter((item) => item.status === req.body.accountStatus)
-          .slice(req.body.firstValue, req.body.lastValue)
-      : user.slice(req.body.firstValue, req.body.lastValue);
+        ? user
+            .filter(
+              (item) =>
+                item.role === req.body.role &&
+                item.status === req.body.accountStatus,
+            )
+            .slice(req.body.firstValue, req.body.lastValue)
+        : req.body.role
+          ? user
+              .filter((item) => item.role === req.body.role)
+              .slice(req.body.firstValue, req.body.lastValue)
+          : req.body.accountStatus
+            ? user
+                .filter((item) => item.status === req.body.accountStatus)
+                .slice(req.body.firstValue, req.body.lastValue)
+            : user.slice(req.body.firstValue, req.body.lastValue);
 
     if (error) {
       return res.send({ error: dbErrorHandler(error) });
@@ -119,28 +118,29 @@ const getUsers = (req, res) => {
             ? user.filter(
                 (item) =>
                   item.role === req.body.role &&
-                  item.status === req.body.accountStatus
+                  item.status === req.body.accountStatus,
               ).length
             : req.body.filterTerm
-            ? user.filter(
-                (item) =>
-                  (
-                    item.firstName.toLowerCase() +
-                    " " +
-                    item.lastName.toLowerCase()
-                  ).includes(req.body.filterTerm) ||
-                  (
-                    item.lastName.toLowerCase() +
-                    " " +
-                    item.firstName.toLowerCase()
-                  ).includes(req.body.filterTerm)
-              ).length
-            : req.body.role
-            ? user.filter((item) => item.role === req.body.role).length
-            : req.body.accountStatus
-            ? user.filter((item) => item.status === req.body.accountStatus)
-                .length
-            : user.length,
+              ? user.filter(
+                  (item) =>
+                    (
+                      item.firstName.toLowerCase() +
+                      " " +
+                      item.lastName.toLowerCase()
+                    ).includes(req.body.filterTerm) ||
+                    (
+                      item.lastName.toLowerCase() +
+                      " " +
+                      item.firstName.toLowerCase()
+                    ).includes(req.body.filterTerm),
+                ).length
+              : req.body.role
+                ? user.filter((item) => item.role === req.body.role).length
+                : req.body.accountStatus
+                  ? user.filter(
+                      (item) => item.status === req.body.accountStatus,
+                    ).length
+                  : user.length,
       });
     }
   });
@@ -153,7 +153,7 @@ const assignUserRole = (req, res, next) => {
       } else {
         return res.send({ error: dbErrorHandler.getErrorMessage(err) });
       }
-    }
+    },
   );
 };
 
@@ -171,7 +171,7 @@ const signin = async (req, res) => {
           role: "admin",
           status: "active",
         },
-        config.secret
+        config.secret,
       );
 
       res.cookie("userJwtToken", token, { httpOnly: true });
@@ -209,7 +209,7 @@ const signin = async (req, res) => {
         role: role,
         status: user.status,
       },
-      config.secret
+      config.secret,
     );
 
     res.cookie("userJwtToken", token, { httpOnly: true });

@@ -3,14 +3,12 @@ import passportJwt from "passport-jwt";
 import config from "../config/config.js";
 
 const cookieExtractor = (req) => {
-  let jwt;
-
   if (req && req.cookies) {
-    jwt = req.cookies;
+    return req.cookies.userJwtToken;
   }
-
-  return jwt.userJwtToken;
+  return null;
 };
+
 const JWTStrategy = passportJwt.Strategy;
 
 passport.use(

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import mongoose from "mongoose";
 import config from "./src/config/config.js";
 import app from "./src/app.js";

@@ -33,7 +33,8 @@ const listByUser = async (req, res) => {
 const update = async (req, res) => {
   try {
     let todo = req.todo;
-    todo.completed = req.body.completed !== undefined ? req.body.completed : todo.completed;
+    todo.completed =
+      req.body.completed !== undefined ? req.body.completed : todo.completed;
     todo.text = req.body.text || todo.text;
     await todo.save();
     res.json(todo);
@@ -47,7 +48,7 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
   try {
     let todo = req.todo;
-    await todo.remove();
+    await todo.deleteOne();
     res.json({ message: "Task deleted successfully" });
   } catch (err) {
     return res.status(400).json({

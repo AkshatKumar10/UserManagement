@@ -19,13 +19,6 @@ const users = [
     role: "student",
   },
   {
-    firstName: "John",
-    lastName: "Smith",
-    email: "hugo_tutto_cammara@test.com",
-    password: "12345678",
-    role: "mentor",
-  },
-  {
     firstName: "Larry",
     lastName: "Bird",
     email: "harry.lattam@test.com",
@@ -44,20 +37,6 @@ const users = [
     firstName: "Luka",
     lastName: "Ovcina",
     email: "luka.ovcina@test.com",
-    password: "12345678",
-    role: "mentor",
-  },
-  {
-    firstName: "Marina",
-    lastName: "Ovcina",
-    email: "marina.ovcina@test.com",
-    password: "12345678",
-    role: "mentor",
-  },
-  {
-    firstName: "Adnan",
-    lastName: "Ovcina",
-    email: "adnan.ovcina@test.com",
     password: "12345678",
     role: "mentor",
   },
@@ -80,6 +59,7 @@ const seedUsers = async () => {
     await mongoose.connect(config.mongoUri);
     console.log("MongoDB connected");
 
+    await Users.deleteMany({});
     await Users.insertMany(users);
     console.log("Users inserted");
 
