@@ -25,22 +25,18 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
-                    sh '''
-                    kubectl apply -f k8s/
-                    '''
-                }
+                sh '''
+                kubectl apply -f k8s/
+                '''
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
-                    sh '''
-                    kubectl get pods
-                    kubectl get services
-                    '''
-                }
+                sh '''
+                kubectl get pods
+                kubectl get services
+                '''
             }
         }
     }
