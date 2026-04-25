@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        KUBECONFIG = credentials('kubeconfig')
+    }
+
     stages {
 
         stage('Clone Repository') {
@@ -21,18 +25,22 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl apply -f k8s/
-                '''
+                withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
+                    sh '''
+                    kubectl apply -f k8s/
+                    '''
+                }
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh '''
-                kubectl get pods
-                kubectl get services
-                '''
+                withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
+                    sh '''
+                    kubectl get pods
+                    kubectl get services
+                    '''
+                }
             }
         }
     }
