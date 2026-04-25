@@ -157,7 +157,98 @@ const assignUserRole = (req, res, next) => {
   );
 };
 
+const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Special Admin Check
+    if (email === "admin@gmail.com" && password === "admin123") {
+      const token = jwt.sign(
+        {
+          _id: "admin_id",
+          email: "admin@gmail.com",
+          name: "Admin User",
+          role: "admin",
+          status: "active",
+        },
+        config.secret
+      );
+
+      res.cookie("userJwtToken", token, { httpOnly: true });
+      return res.json({
+        token,
+        user: {
+          _id: "admin_id",
+          firstName: "Admin",
+          lastName: "User",
+          email: "admin@gmail.com",
+          role: "admin",
+        },
+        message: "Admin logged in successfully",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    if (!user.authenticate(password)) {
+      return res.status(401).send({ error: "Email and password don't match." });
+    }
+
+    if (user.status === "deactivated") {
+      return res.status(401).json({ error: "Account deactivated" });
+    }
+
+    const role = user.role || "student";
+
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+        role: role,
+        status: user.status,
+      },
+      config.secret
+    );
+
+    res.cookie("userJwtToken", token, { httpOnly: true });
+
+    return res.json({
+      token,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: role,
+        userImage: user.userImage,
+      },
+      message: "Logged in successfully",
+    });
+  } catch (err) {
+    return res.status(401).json({ error: "Could not sign in" });
+  }
+};
+
+const signout = (req, res) => {
+  res.clearCookie("userJwtToken");
+  return res.status(200).json({
+    message: "signed out",
+  });
+};
+
 const userByID = (req, res, next, id) => {
+  if (id === "admin_id") {
+    req.profile = {
+      _id: "admin_id",
+      firstName: "Admin",
+      lastName: "User",
+      email: "admin@gmail.com",
+      role: "admin",
+    };
+    return next();
+  }
   User.findById(id).exec((err, user) => {
     if (err || !user) {
       return res.json({ error: "User not found!" });
@@ -175,4 +266,6 @@ export default {
   getUsers,
   assignUserRole,
   userByID,
+  signin,
+  signout,
 };

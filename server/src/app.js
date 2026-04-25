@@ -6,6 +6,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes.js";
 import userImageRoutes from "./routes/userImage.routes.js";
+import todoRoutes from "./routes/todo.routes.js";
 import errorLogger from "./controllers/helpers/errorLogger.js";
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/", userRoutes);
 
 app.use("/images", express.static("images"));
 app.use("/", userImageRoutes);
+app.use("/", todoRoutes);
 app.all("*", (req, res) => {
   return res.status(404).send(`<h1>Unknown route</h1>`);
 });

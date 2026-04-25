@@ -6,6 +6,12 @@ const consoleLog = new winston.transports.Console({
   handleRejections: true,
 });
 
+const log = new winston.transports.DailyRotateFile({
+  filename: "logs/%DATE%.log",
+  datePattern: "YYYY-MM-DD",
+  maxFiles: "14d",
+});
+
 const errorLogger = winston.createLogger({
   transports: [log, consoleLog],
 });

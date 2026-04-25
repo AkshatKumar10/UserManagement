@@ -82,6 +82,23 @@ export const assignRole = createAsyncThunk(
   }
 );
 
+export const signin = createAsyncThunk(
+  "userManagement/signin",
+  async (user) => {
+    return await axios
+      .post("/api/signin", user)
+      .then((response) => response.data)
+      .catch((error) => error.response.data);
+  }
+);
+
+export const signout = createAsyncThunk("userManagement/signout", async () => {
+  return await axios
+    .get("/api/signout")
+    .then((response) => response.data)
+    .catch((error) => error.response.data);
+});
+
 const initialState = {
   editUserForm: false,
   uploadImage: {},
@@ -100,6 +117,7 @@ const initialState = {
   userToDelete: {},
   assignRole: {},
   userProfile: {},
+  loggedUser: JSON.parse(localStorage.getItem("user")) || null,
 };
 
 const userManagementSlice = createSlice({
@@ -205,6 +223,17 @@ const userManagementSlice = createSlice({
     [assignRole.fulfilled]: (state, { payload }) => {
       return { ...state, assignRole: payload };
     },
+    [signin.fulfilled]: (state, { payload }) => {
+      if (!payload.error) {
+        localStorage.setItem("user", JSON.stringify(payload));
+        return { ...state, loggedUser: payload };
+      }
+      return { ...state, loggedUser: payload };
+    },
+    [signout.fulfilled]: (state) => {
+      localStorage.removeItem("user");
+      return { ...state, loggedUser: null };
+    },
   },
 });
 
@@ -239,6 +268,7 @@ export const getAssignRoleModalStatus = (state) =>
   state.userManagement.assignRoleModal;
 export const getAssignRoleStatus = (state) => state.userManagement.assignRole;
 export const getUserProfile = (state) => state.userManagement.userProfile;
+export const getLoggedUser = (state) => state.userManagement.loggedUser;
 
 export const {
   setEditUserProfileForm,

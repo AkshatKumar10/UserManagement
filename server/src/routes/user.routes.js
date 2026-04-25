@@ -5,18 +5,13 @@ import "../middleware/passport.js";
 
 const router = express.Router();
 
-router.get(
-  "/protected",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    if (req.cookies.userJwtToken) {
-      res.send(JSON.stringify({ message: req.cookies.userJwtToken }));
-    }
-  }
-);
+
 
 // For authorization add here authCtrl.hasAuthorization. If user does not have httpyOnly cookie in request he or she will not
 //be able to access routes. Also users using POSTMAN would be prevented from sending req if they are not logged in
+router.route("/api/signin").post(userCtrl.signin);
+router.route("/api/signout").get(userCtrl.signout);
+
 router.route("/api/users").post(userCtrl.getUsers);
 router.route("/api/addUser").post(userCtrl.createUser);
 router.route("/api/removeUser/:userId").put(userCtrl.remove);
