@@ -14,11 +14,6 @@ services:
       - mongo_config:/data/configdb
     networks:
       - usermanagement-network
-    healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     logging:
       driver: "json-file"
       options:
@@ -32,8 +27,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
-      mongo:
-        condition: service_healthy
+      - mongo
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${BACKEND_PORT:-5000}
