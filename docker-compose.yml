@@ -4,7 +4,6 @@ services:
   # MongoDB database service
   mongo:
     image: mongo:latest
-    container_name: usermanagement-mongo
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-usersManagement}
@@ -16,7 +15,7 @@ services:
     networks:
       - usermanagement-network
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,7 +30,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: usermanagement-backend
     restart: unless-stopped
     depends_on:
       mongo:
@@ -58,7 +56,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-    container_name: usermanagement-frontend
     restart: unless-stopped
     depends_on:
       - backend
