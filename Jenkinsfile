@@ -1,43 +1,29 @@
 pipeline {
     agent any
 
-    environment {
-        KUBECONFIG = credentials('kubeconfig')
-    }
-
     stages {
 
         stage('Clone Repository') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/AkshatKumar10/UserManagement.git'
+                    url: 'https://github.com/AkshatKumar10/UserManagement.git'
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Deploy') {
             steps {
                 sh '''
-                docker build -t user-backend:latest ./server
-                docker build -t user-frontend:latest ./client
+                    docker-compose down || true
+                    docker-compose up -d --build
                 '''
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Verify') {
             steps {
-                sh '''
-                kubectl apply -f k8s/
-                '''
+                sh 'docker ps'
             }
         }
 
-        stage('Verify Deployment') {
-            steps {
-                sh '''
-                kubectl get pods
-                kubectl get services
-                '''
-            }
-        }
     }
 }
