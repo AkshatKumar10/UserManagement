@@ -12,8 +12,8 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '''
-                    docker-compose down || true
+                bat '''
+                    docker-compose down
                     docker-compose up -d --build
                 '''
             }
@@ -21,7 +21,7 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh 'docker ps'
+                bat 'docker ps'
             }
         }
 
